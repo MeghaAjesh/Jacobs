@@ -1,27 +1,27 @@
 import admin from 'firebase-admin';
-import serviceAccount from './Jacobs.json';
-
 export const runtime = 'nodejs';
 
-// Initialize Firebase Admin only once
 if (!admin.apps.length) {
   try {
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
+
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
+      credential: admin.credential.cert({
+        ...serviceAccount,
+        private_key: serviceAccount.private_key.replace(/\\n/g, '\n'),
+      }),
     });
-    
+
     console.log('✅ Firebase Admin initialized successfully');
   } catch (error) {
     console.error('❌ Firebase Admin initialization failed:', error);
-    throw new Error('Firebase Admin initialization failed. Make sure Jacobs.json exists and is valid.');
+    throw new Error('Firebase Admin initialization failed. Check your FIREBASE_SERVICE_ACCOUNT env variable.');
   }
 }
 
-// Export Firebase services
 export const db = admin.firestore();
 export const auth = admin.auth();
 
-// Helper function to verify Firebase ID tokens
 export async function verifyIdToken(token: string) {
   try {
     const decodedToken = await auth.verifyIdToken(token);
