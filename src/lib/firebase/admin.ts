@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import serviceAccount from './Jacobs.json';const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT || '{}');
+import serviceAccount from './Jacobs.json';
 
 export const runtime = 'nodejs';
 
